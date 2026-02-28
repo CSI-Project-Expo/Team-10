@@ -15,10 +15,24 @@ const { errorHandler } = require('./middleware/errorHandler');
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server, { cors: { origin: '*' } });
+
+// CORS – allow the deployed frontend and localhost for dev
+const allowedOrigins = [
+  'http://localhost:8080',
+  'http://127.0.0.1:8080',
+  process.env.FRONTEND_URL, // e.g. https://pixel-duel-frontend.onrender.com
+].filter(Boolean);
+
+const corsOptions = {
+  origin: process.env.NODE_ENV === 'production' ? allowedOrigins : '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+  credentials: true,
+};
+
+const io = new Server(server, { cors: corsOptions });
 
 // Middleware
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Routes
@@ -54,4 +68,4 @@ redisClient.connect().then(() => console.log('Redis connected')).catch(console.e
 setupSocket(io, redisClient);
 
 const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+server.listen(PORT, '0.0.0.0', () => console.log(`Server running on port ${PORT}`));

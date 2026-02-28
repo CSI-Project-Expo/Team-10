@@ -12,8 +12,12 @@ RUN apt-get update \
 	&& rm -rf /var/lib/apt/lists/*
 
 COPY judge-microservice/package*.json ./
-RUN npm install
+RUN npm install --production
 
 COPY judge-microservice/ .
+
+# Render injects PORT env var at runtime (default 10000)
+ENV PORT=10000
+EXPOSE 10000
 
 CMD ["node", "index.js"]

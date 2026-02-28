@@ -217,5 +217,5 @@ function safeRm(dir) {
   }
 }
 
-const PORT = 8000;
-app.listen(PORT, () => console.log(`Judge microservice running on port ${PORT}`));
+const PORT = parseInt(process.env.PORT, 10) || 8000;
+app.listen(PORT, '0.0.0.0', () => console.log(`Judge microservice running on port ${PORT}`));
