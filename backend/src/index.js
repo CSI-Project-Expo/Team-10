@@ -34,10 +34,17 @@ app.get('/', (_req, res) => res.json({ status: 'ok' }));
 // Error handler
 app.use(errorHandler);
 
-// MongoDB
-mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log('MongoDB connected'))
-  .catch(err => console.error('MongoDB connection error:', err));
+// MongoDB - Modern connection (deprecated options removed)
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log('MongoDB connected successfully'))
+  .catch(err => {
+    console.error('MongoDB connection error:', err);
+    process.exit(1);
+  });
+
+// Handle MongoDB connection events
+mongoose.connection.on('disconnected', () => console.warn('MongoDB disconnected'));
+mongoose.connection.on('reconnected', () => console.log('MongoDB reconnected'));
 
 // Redis
 const redisClient = createClient({ url: process.env.REDIS_URL });

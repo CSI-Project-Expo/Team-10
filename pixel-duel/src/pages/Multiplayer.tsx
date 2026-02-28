@@ -3,12 +3,12 @@ import { Navbar } from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { useMatchmaking } from "@/hooks/useMatchmaking";
 import { DuelArena } from "@/components/DuelArena";
-import { Swords, Wifi, Loader2 } from "lucide-react";
+import { Swords, Wifi, Loader2, AlertCircle } from "lucide-react";
 
 export default function Multiplayer() {
   const userId = "699e0e8b9ab2e91bcd967dd2"; // seeded demo user
   const elo = 1200;
-  const { roomId, opponent, status, startMatchmaking, stopMatchmaking } = useMatchmaking(userId, elo, {
+  const { roomId, opponent, status, error, startMatchmaking, stopMatchmaking } = useMatchmaking(userId, elo, {
     autoStart: false,
   });
   const [showArena, setShowArena] = useState(false);
@@ -44,6 +44,13 @@ export default function Multiplayer() {
                 <div className="text-xs text-muted-foreground">Status: {status}</div>
               </div>
             </div>
+
+            {error && (
+              <div className="flex items-center gap-2 rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive">
+                <AlertCircle className="h-4 w-4 flex-shrink-0" />
+                <span>{error}</span>
+              </div>
+            )}
 
             <div className="space-y-2 text-sm text-muted-foreground">
               <p>We register your socket, enqueue you by Elo, and emit <code>match_found</code> when paired.</p>
